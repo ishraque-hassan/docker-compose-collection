@@ -1,0 +1,61 @@
+# docker run --name mssql -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=Password123 -p 1433:1433 -u root -v mssql:/var/opt/mssql/data -d mcr.microsoft.com/mssql/server:2022-latest
+# docker run --name postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -p 5432:5432 -v postgres:/var/lib/postgresql/data -d postgres:latest
+# docker run --name mongo -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password -p 27017:27017 -v mongo:/data/db -v mongoconfig:/data/configdb -d mongo:latest
+# docker run --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=admin@postgres.com -e PGADMIN_DEFAULT_PASSWORD=password -p 8080:80 -v pgadmin4:/var/lib/pgadmin -d dpage/pgadmin4:latest
+
+version: '3.9'
+
+name: database
+services:
+  mssql:
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=password
+    volumes:
+      - mssql:/var/opt/mssql/data
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  mongo:
+    container_name: mongodb
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data/db
+      - mongoconfig:/data/configdb
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:latest
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@postgres.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin4:/var/lib/pgadmin
+
+volumes:
+  mssql:
+  postgres:
+  mongo:
+  mongoconfig:
+  pgadmin4:
+  
